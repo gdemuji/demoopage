@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Scan Barcode</title>
+  <style>
+    #interactive {
+      width: 100%;
+      max-width: 400px;
+      margin-top: 10px;
+    }
+    video {
+      width: 100%;
+      border: 2px solid #333;
+      border-radius: 8px;
+    }
+    #result {
+      margin-top: 10px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: darkgreen;
+    }
+  </style>
+</head>
+<body>
+  <h2>Demo Scan Barcode</h2>
+  <button id="btnScan">📷 Scan Kode</button>
+
+  <!-- Area kamera & hasil akan muncul setelah klik tombol -->
+  <div id="scanner" style="display:none;">
+    <div id="interactive" class="viewport"></div>
+    <p>Hasil: <span id="result">-</span></p>
+  </div>
+
+  <!-- QuaggaJS -->
+  <script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.js"></script>
+  <script>
+    const btnScan = document.getElementById("btnScan");
+    const scannerEl = document.getElementById("scanner");
+    const resultEl = document.getElementById("result");
+    let scanning = false;
+
+    btnScan.addEventListener("click", () => {
+      if (!scanning) {
+        scannerEl.style.display = "block";
+        startScanner();
+      }
+    });
+
+    function startScanner() {
+      Quagga.init({
+        inputStream: {
+          name: "Live",
+          type: "LiveStream",
+          target: document.querySelector('#interactive'),
+          constraints: {
+            facingMode: "environment" // kamera belakang
+          }
+        },
+        decoder: {
+          readers: [
+            "code_128_reader",
+            "ean_reader",
+            "ean_8_reader",
+            "upc_reader",
+            "upc_e_reader"
+          ]
+        }
+      }, function (err) {
+        if (err) {
+          console.error("Init error:", err);
+          return;
+        }
+        console.log("Scanner ready...");
+        Quagga.start();
+        scanning = true;
+      });
+
+      Quagga.onDetected(function (data) {
+        if (data && data.codeResult) {
+          resultEl.textContent = data.codeResult.code;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
