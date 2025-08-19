@@ -2,21 +2,48 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Scan Barcode</title>
   <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 16px;
+      text-align: center;
+      background: #f9f9f9;
+    }
+    h2 {
+      margin-bottom: 16px;
+    }
+    button {
+      display: inline-block;
+      padding: 14px 24px;
+      margin: 8px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    button:active {
+      background: #0056b3;
+    }
     #interactive {
       width: 100%;
-      max-width: 400px;
-      margin-top: 10px;
+      max-width: 500px;
+      margin: 12px auto;
+      border-radius: 12px;
+      overflow: hidden;
     }
     video {
       width: 100%;
-      border: 2px solid #333;
-      border-radius: 8px;
+      height: auto;
+      border-radius: 12px;
     }
     #result {
-      margin-top: 10px;
-      font-size: 1.2em;
+      margin-top: 12px;
+      font-size: 1.4em;
       font-weight: bold;
       color: darkgreen;
     }
@@ -24,9 +51,12 @@
 </head>
 <body>
   <h2>Demo Scan Barcode</h2>
-  <button id="btnScan">📷 Scan Kode</button>
 
-  <!-- Area kamera & hasil akan muncul setelah klik tombol -->
+  <!-- Tombol selalu tampil -->
+  <button id="btnScan">Mulai Scan</button>
+  <button id="btnStop" style="display:none; background:#dc3545;">Stop Scan</button>
+
+  <!-- Area kamera & hasil -->
   <div id="scanner" style="display:none;">
     <div id="interactive" class="viewport"></div>
     <p>Hasil: <span id="result">-</span></p>
@@ -36,6 +66,7 @@
   <script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.js"></script>
   <script>
     const btnScan = document.getElementById("btnScan");
+    const btnStop = document.getElementById("btnStop");
     const scannerEl = document.getElementById("scanner");
     const resultEl = document.getElementById("result");
     let scanning = false;
@@ -43,8 +74,13 @@
     btnScan.addEventListener("click", () => {
       if (!scanning) {
         scannerEl.style.display = "block";
+        btnStop.style.display = "inline-block";
         startScanner();
       }
+    });
+
+    btnStop.addEventListener("click", () => {
+      stopScanner();
     });
 
     function startScanner() {
@@ -81,6 +117,16 @@
           resultEl.textContent = data.codeResult.code;
         }
       });
+    }
+
+    function stopScanner() {
+      if (scanning) {
+        Quagga.stop();
+        scanning = false;
+        btnStop.style.display = "none";
+        scannerEl.style.display = "none";
+        resultEl.textContent = "-";
+      }
     }
   </script>
 </body>
