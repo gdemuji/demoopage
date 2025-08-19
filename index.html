@@ -32,25 +32,27 @@
     #interactive {
       width: 100%;
       max-width: 500px;
-      margin: 12px auto;
+      margin: 12px auto 6px auto; /* lebih rapat ke label */
       border-radius: 12px;
       overflow: hidden;
     }
     video {
       width: 100%;
-      height: auto;
+      height: 160px; /* crop tinggi video */
+      object-fit: cover;      /* crop proporsional */
+      object-position: center;/* ambil bagian tengah */
       border-radius: 12px;
     }
     #result {
-      margin-top: 12px;
-      font-size: 1.4em;
+      margin-top: 4px; /* rapat ke kamera */
+      font-size: 1.2em;
       font-weight: bold;
       color: darkgreen;
     }
   </style>
 </head>
 <body>
-  <h2>Demo Scan Barcode</h2>
+  <h2>Scan Barcode</h2>
 
   <!-- Tombol selalu tampil -->
   <button id="btnScan">Mulai Scan</button>
@@ -59,7 +61,7 @@
   <!-- Area kamera & hasil -->
   <div id="scanner" style="display:none;">
     <div id="interactive" class="viewport"></div>
-    <p>Hasil: <span id="result">-</span></p>
+    <p id="result">-</p>
   </div>
 
   <!-- QuaggaJS -->
@@ -90,7 +92,7 @@
           type: "LiveStream",
           target: document.querySelector('#interactive'),
           constraints: {
-            facingMode: "environment" // kamera belakang
+            facingMode: "environment"
           }
         },
         decoder: {
